@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成渐变色图片</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f0f0;
+            padding-top: 30px;
+        }
+
+        #controls {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        #gradient {
+            display: none;
+        }
+
+        .preview-container {
+            text-align: center;
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #preview {
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group+.form-group {
+            margin-top: 20px;
+        }
+
+        .examples {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="controls" class="container">
+        <h2 class="mb-4">生成渐变色图片</h2>
+        <div class="form-group">
+            <label for="gradientInput">输入渐变色代码</label>
+            <input type="text" id="gradientInput" class="form-control"
+                placeholder="示例: linear-gradient(to right, rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89))">
+            <div class="examples">
+                <p>输入示例：</p>
+                <ul>
+                    <li>linear-gradient(to right, rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89))</li>
+                    <li>linear-gradient(to bottom, #12c2e9, #c471ed, #f64f59)</li>
+                    <li>rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89)</li>
+                    <li>#12c2e9, #c471ed, #f64f59</li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sizeSelect">选择图片大小</label>
+            <select id="sizeSelect" class="form-control">
+                <option value="800x600">800x600</option>
+                <option value="1024x768">1024x768</option>
+                <option value="1280x720">1280x720</option>
+                <option value="1920x1080">1920x1080</option>
+                <option value="custom">自定义大小</option>
+            </select>
+        </div>
+        <div id="customSize" class="form-row" style="display:none;">
+            <div class="form-group col">
+                <label for="customWidth">宽度</label>
+                <input type="number" id="customWidth" class="form-control" placeholder="宽度">
+            </div>
+            <div class="form-group col">
+                <label for="customHeight">高度</label>
+                <input type="number" id="customHeight" class="form-control" placeholder="高度">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="borderRadius">圆角大小 (%)</label>
+            <input type="range" id="borderRadius" class="form-control" min="0" max="50" value="0">
+            <span id="borderRadiusValue">0%</span>
+        </div>
+        <div class="form-group">
+            <label for="directionSelect">渐变方向调节</label>
+            <input type="range" id="directionSelect" class="form-control" min="0" max="360" value="0">
+            <span id="directionValue">0°</span>
+        </div>
+        <button id="previewBtn" class="btn btn-secondary btn-block mt-4">预览图片</button>
+        <button id="generate" class="btn btn-primary btn-block mt-2">生成图片</button>
+        <button id="download" class="btn btn-success btn-block mt-2" style="display:none;">下载图片</button>
+    </div>
+
+    <div class="preview-container">
+        <div id="preview"></div>
+    </div>
+
+    <div id="gradient"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        document.getElementById('sizeSelect').addEventListener('change', function () {
+            const customSize = document.getElementById('customSize');
+            if (this.value === 'custom') {
+                customSize.style.display = 'flex';
+            } else {
+                customSize.style.display = 'none';
+            }
+        });
+
+        document.getElementById('borderRadius').addEventListener('input', function () {
+            const value = this.value;
+            document.getElementById('borderRadiusValue').textContent = value + '%';
+            updatePreview();
+        });
+
+        document.getElementById('directionSelect').addEventListener('input', function () {
+            const value = this.value;
+            document.getElementById('directionValue').textContent = value + '°';
+            updatePreview();
+        });
+
+        function parseGradientInput(input) {
+            if (input.startsWith('linear-gradient')) {
+                return input;
+            } else {
+                const colors = input.split(',').map(c => c.trim());
+                return `linear-gradient(to right, ${colors.join(', ')})`;
+            }
+        }
+
+        function updatePreview() {
+            const gradientInput = document.getElementById('gradientInput').value;
+            const sizeSelect = document.getElementById('sizeSelect').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            const direction = document.getElementById('directionSelect').value;
+            let width, height;
+
+            if (sizeSelect === 'custom') {
+                width = document.getElementById('customWidth').value || 800;
+                height = document.getElementById('customHeight').value || 600;
+            } else {
+                [width, height] = sizeSelect.split('x').map(Number);
+            }
+
+            const previewDiv = document.getElementById('preview');
+            previewDiv.style.width = width + 'px';
+            previewDiv.style.height = height + 'px';
+            previewDiv.style.background = parseGradientInput(gradientInput);
+            previewDiv.style.borderRadius = borderRadius + '%';
+            previewDiv.style.transform = `rotate(${direction}deg)`;
+            previewDiv.style.display = 'block';
+        }
+
+        document.getElementById('previewBtn').addEventListener('click', updatePreview);
+
+        document.getElementById('generate').addEventListener('click', function () {
+            const gradientInput = document.getElementById('gradientInput').value;
+            const sizeSelect = document.getElementById('sizeSelect').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            const direction = document.getElementById('directionSelect').value;
+            let width, height;
+
+            if (sizeSelect === 'custom') {
+                width = document.getElementById('customWidth').value || 800;
+                height = document.getElementById('customHeight').value || 600;
+            } else {
+                [width, height] = sizeSelect.split('x').map(Number);
+            }
+
+            const gradientDiv = document.getElementById('gradient');
+            gradientDiv.style.display = 'block';
+            gradientDiv.style.width = width + 'px';
+            gradientDiv.style.height = height + 'px';
+            gradientDiv.style.background = parseGradientInput(gradientInput);
+            gradientDiv.style.borderRadius = borderRadius + '%';
+            gradientDiv.style.transform = `rotate(${direction}deg)`;
+
+            html2canvas(gradientDiv).then(canvas => {
+                gradientDiv.style.display = 'none';
+                const link = document.createElement('a');
+                link.download = 'gradient_image.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        });
+    </script>
+</body>
+
+</html>
