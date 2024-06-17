@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('borderRadiusValue').textContent = value + '%';
         updatePreview();
     });
+// 监听角度控件变化事件，更新预览
+//     document.getElementById('angleSelect').addEventListener('input', function () {
+//         const angleValue = this.value;
+//         document.getElementById('angleValue').textContent = angleValue + '°';
+//         updatePreview();
+//     });
 
     document.getElementById('fontSizeInput').addEventListener('input', updatePreview);
     document.getElementById('fontColorInput').addEventListener('input', updatePreview);
@@ -30,9 +36,22 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             if (input.startsWith('linear-gradient')) {
                 return input;
+            } else if (input.startsWith('-webkit-linear-gradient')) {
+                // 解析 -webkit-linear-gradient(90deg,#3caba7,#92dffc) 格式的渐变色
+                const regex = /-webkit-linear-gradient\((.+?)\)/;
+                const matches = input.match(regex);
+                if (matches && matches.length > 1) {
+                    const params = matches[1].split(',');
+                    const angle = params[0].trim();
+                    const colors = params.slice(1).map(c => c.trim());
+                    return `linear-gradient(${angle}, ${colors.join(', ')})`;
+                } else {
+                    throw new Error('Invalid -webkit-linear-gradient format');
+                }
             } else {
+                // 默认处理其他格式，如 linear-gradient(90deg,#3caba7,#92dffc)
                 const colors = input.split(',').map(c => c.trim());
-                return `linear-gradient(to right, ${colors.join(', ')})`;
+                return `linear-gradient(${colors.join(', ')})`;
             }
         } catch (error) {
             showErrorMessage('解析渐变色输入时出错，请检查输入格式。');
@@ -51,9 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 更新预览功能
+    // 更新预览功能
     function updatePreview() {
         try {
             clearErrorMessage();
+
             const gradientInput = document.getElementById('gradientInput').value;
             const sizeSelect = document.getElementById('sizeSelect').value;
             const borderRadius = document.getElementById('borderRadius').value;
@@ -61,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const fontSize = document.getElementById('fontSizeInput').value;
             const fontColor = document.getElementById('fontColorInput').value;
             const letterSpacing = document.getElementById('letterSpacingInput').value;
+            // const angle = document.getElementById('angleSelect').value; // 获取角度控件的值
 
             let width, height;
 
@@ -76,11 +98,14 @@ document.addEventListener('DOMContentLoaded', function () {
             previewDiv.style.height = height + 'px';
             previewDiv.style.borderRadius = Math.min(width, height) * (borderRadius / 100) + 'px';
 
-            const parsedGradient = parseGradientInput(gradientInput); // 解析用户输入的渐变色
+            const parsedGradient = parseGradientInput(gradientInput);
 
+            // 应用渐变色和角度
             previewDiv.style.background = parsedGradient;
             previewDiv.style.backgroundSize = 'cover';
             previewDiv.style.backgroundRepeat = 'no-repeat';
+            previewDiv.style.backgroundImage = `${parsedGradient}, linear-gradient( rgba(255,255,255,0.5), rgba(255,255,255,0.5))`;
+
             previewDiv.style.position = 'relative';
             previewDiv.innerHTML = '';
 
@@ -101,8 +126,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error('Error updating preview: ', error);
+            showErrorMessage('更新预览时出错，请稍后再试。');
         }
     }
+
 
     document.getElementById('previewBtn').addEventListener('click', updatePreview);
 
