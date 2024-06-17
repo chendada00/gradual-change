@@ -1,0 +1,63 @@
+body,
+html {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f0f0f0;
+    padding-top: 30px;
+}
+
+#controls {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    width: 95%;
+    max-width: 800px;
+    text-align: center;
+}
+
+#gradient {
+    display: none;
+}
+
+.preview-container {
+    text-align: center;
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+#preview {
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group+.form-group {
+    margin-top: 20px;
+}
+
+.examples {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #888;
+    text-align: left;
+}
+@font-face {
+    font-family: 'DingTalk';
+    src: url('https://qn.ctext.top/blog-img/font/DingTalk%20JinBuTi.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'DingTalk', sans-serif; /* sans-serif 是备用字体 */
+}
+.preview-container {
+    padding-bottom: 50px; /* 自定义底部距离，可以根据需要调整 */
+}
