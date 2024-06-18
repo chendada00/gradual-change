@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>生成渐变色图片</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -30,8 +31,8 @@
     <div class="form-group">
         <label for="sizeSelect">选择图片大小</label>
         <select id="sizeSelect" class="form-control">
-            <option value="1028x450">1028x450</option>
-            <option value="514x225">514x225</option>
+            <option value="1028x450">1028x450博客主图尺寸x2</option>
+            <option value="514x225">514x225博客主图尺寸</option>
             <option value="800x600">800x600</option>
             <option value="1024x768">1024x768</option>
             <option value="1280x720">1280x720</option>
@@ -54,14 +55,9 @@
         <input type="range" id="borderRadius" class="form-control" min="0" max="50" value="0">
         <span id="borderRadiusValue">0%</span>
     </div>
-<!--    <div class="form-group">-->
-<!--        <label for="angleSelect">渐变角度调节</label>-->
-<!--        <input type="range" id="angleSelect" class="form-control" min="0" max="360" value="0">-->
-<!--        <span id="angleValue">0°</span>-->
-<!--    </div>-->
     <div class="form-group">
         <label for="textInput">输入文字</label>
-        <input type="text" id="textInput" class="form-control" placeholder="输入自定义文字">
+        <input type="text" id="textInput" class="form-control" value="标题" placeholder="输入自定义文字">
     </div>
     <div class="form-row">
         <div class="form-group col" style="margin-top: 20px">
@@ -70,11 +66,11 @@
         </div>
         <div class="form-group col">
             <label for="fontSizeInput">文字大小(px)</label>
-            <input type="number" id="fontSizeInput" class="form-control" value="24" min="10" max="100">
+            <input type="number" id="fontSizeInput" class="form-control" value="130" min="10" max="100">
         </div>
         <div class="form-group col">
             <label for="letterSpacingInput">文字间距(px)</label>
-            <input type="number" id="letterSpacingInput" class="form-control" value="0" min="0" max="50">
+            <input type="number" id="letterSpacingInput" class="form-control" value="10" min="0" max="50">
         </div>
     </div>
 
@@ -88,7 +84,7 @@
         <button class="btn btn-primary generate-button" onclick=" window.open('https://peiseka.com/jianbianse.html', '_blank')">配色卡</button>
         <button class="btn btn-primary generate-button" onclick=" window.open('https://webkul.github.io/coolhue/', '_blank')">webkul</button>
     </div>
-<!--    <button id="download" class="btn btn-success btn-block mt-2" style="display:none;">下载图片</button>-->
+    <!--    <button id="download" class="btn btn-success btn-block mt-2" style="display:none;">下载图片</button>-->
 </div>
 
 <div class="preview-container">

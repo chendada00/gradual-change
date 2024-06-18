@@ -20,13 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('borderRadiusValue').textContent = value + '%';
         updatePreview();
     });
-// 监听角度控件变化事件，更新预览
-//     document.getElementById('angleSelect').addEventListener('input', function () {
-//         const angleValue = this.value;
-//         document.getElementById('angleValue').textContent = angleValue + '°';
-//         updatePreview();
-//     });
-
     document.getElementById('fontSizeInput').addEventListener('input', updatePreview);
     document.getElementById('fontColorInput').addEventListener('input', updatePreview);
     document.getElementById('letterSpacingInput').addEventListener('input', updatePreview);
@@ -69,8 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
         errorMessageDiv.textContent = '';
     }
 
-    // 更新预览功能
-    // 更新预览功能
     function updatePreview() {
         try {
             clearErrorMessage();
@@ -181,7 +172,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.body.appendChild(gradientDiv);
 
-            html2canvas(gradientDiv).then(canvas => {
+            html2canvas(gradientDiv, {
+                scale: 2, // 提高图像质量
+                transparent: true // 保留元素透明度
+            }).then(canvas => {
                 gradientDiv.remove();
                 canvas.toBlob(function (blob) {
                     const url = URL.createObjectURL(blob);
