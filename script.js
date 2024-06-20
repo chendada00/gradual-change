@@ -41,6 +41,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     throw new Error('Invalid -webkit-linear-gradient format');
                 }
+            } else if (input.includes('background-image')) {
+                // 解析 background-image: linear-gradient(180deg, #FFFFFF 0%, #6284FF 50%, #FF0000 100%);
+                const regex = /background-image:\s*(.+?);/;
+                const matches = input.match(regex);
+                if (matches && matches.length > 1) {
+                    return matches[1].trim();
+                } else {
+                    throw new Error('Invalid background-image format');
+                }
             } else {
                 // 默认处理其他格式，如 linear-gradient(90deg,#3caba7,#92dffc)
                 const colors = input.split(',').map(c => c.trim());
