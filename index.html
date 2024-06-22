@@ -14,8 +14,8 @@
     <div class="form-group">
         <label for="gradientInput">输入渐变色代码</label>
         <input type="text" id="gradientInput" class="form-control"
-               placeholder="示例: linear-gradient(to right, rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89))"
-               value="linear-gradient(to right, rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89))">
+               placeholder="示例: background-image: radial-gradient( circle 311px at 8.6% 27.9%,  rgba(62,147,252,0.57) 12.9%, rgba(239,183,192,0.44) 91.2% );"
+               value="background-image: radial-gradient( circle 311px at 8.6% 27.9%,  rgba(62,147,252,0.57) 12.9%, rgba(239,183,192,0.44) 91.2% );">
         <div class="examples">
             <p>输入示例：</p>
             <ul>
@@ -33,8 +33,9 @@
     <div class="form-group">
         <label for="sizeSelect">选择图片大小</label>
         <select id="sizeSelect" class="form-control">
-            <option value="1028x450">1028x450博客主图尺寸x2</option>
-            <option value="514x225">514x225博客主图尺寸</option>
+            <option value="1028x450">1028x450(博客主图尺寸x2)</option>
+            <option value="514x225">514x225(博客主图尺寸)</option>
+            <option value="1440x3200">1440x3200(手机2K)</option>
             <option value="800x600">800x600</option>
             <option value="1024x768">1024x768</option>
             <option value="1280x720">1280x720</option>
@@ -43,7 +44,7 @@
         </select>
     </div>
     <div id="customSize" class="form-row" style="display:none;">
-        <div class="form-group col">
+        <div class="form-group col"  style="margin-top: 20px">
             <label for="customWidth">宽度</label>
             <input type="number" id="customWidth" class="form-control" placeholder="宽度">
         </div>
