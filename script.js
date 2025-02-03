@@ -27,40 +27,74 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function parseGradientInput(input) {
         try {
+            // 去除输入中的多余空格和末尾的分号
+            input = input.trim().replace(/;$/, '');
+
+            // 处理带有 background: 或 background-image: 前缀的情况
+            if (input.startsWith('background:')) {
+                input = input.replace('background:', '').trim();
+            } else if (input.startsWith('background-image:')) {
+                input = input.replace('background-image:', '').trim();
+            }
+
+            // 检查是否是合法的渐变格式
+            if (!isValidGradient(input)) {
+                throw new Error('输入的渐变格式不合法，请检查格式。');
+            }
+
+            // 处理 linear-gradient 格式
             if (input.startsWith('linear-gradient')) {
                 return input;
-            } else if (input.startsWith('-webkit-linear-gradient')) {
-                // 解析 -webkit-linear-gradient(90deg,#3caba7,#92dffc) 格式的渐变色
-                const regex = /-webkit-linear-gradient\((.+?)\)/;
-                const matches = input.match(regex);
-                if (matches && matches.length > 1) {
-                    const params = matches[1].split(',');
-                    const angle = params[0].trim();
-                    const colors = params.slice(1).map(c => c.trim());
-                    return `linear-gradient(${angle}, ${colors.join(', ')})`;
-                } else {
-                    throw new Error('Invalid -webkit-linear-gradient format');
-                }
-            } else if (input.includes('background-image')) {
-                // 解析 background-image: linear-gradient(180deg, #FFFFFF 0%, #6284FF 50%, #FF0000 100%);
-                const regex = /background-image:\s*(.+?);/;
-                const matches = input.match(regex);
-                if (matches && matches.length > 1) {
-                    return matches[1].trim();
-                } else {
-                    throw new Error('Invalid background-image format');
-                }
-            } else {
-                // 默认处理其他格式，如 linear-gradient(90deg,#3caba7,#92dffc)
-                const colors = input.split(',').map(c => c.trim());
-                return `linear-gradient(${colors.join(', ')})`;
             }
+
+            // 处理 -webkit-linear-gradient 格式
+            if (input.startsWith('-webkit-linear-gradient')) {
+                return convertWebkitGradient(input);
+            }
+
+            // 处理 radial-gradient 和 conic-gradient 格式
+            if (input.startsWith('radial-gradient') || input.startsWith('conic-gradient')) {
+                return input;
+            }
+
+            // 处理带有 to right 等方向的渐变
+            if (input.includes('to')) {
+                return input;
+            }
+
+            // 默认处理其他格式，如简单的颜色列表
+            const colors = input.split(',').map(c => c.trim());
+            if (colors.length < 2) {
+                throw new Error('渐变至少需要两个颜色值。');
+            }
+            return `linear-gradient(${colors.join(', ')})`;
         } catch (error) {
-            showErrorMessage('解析渐变色输入时出错，请检查输入格式。');
+            showErrorMessage(`解析渐变色输入时出错：${error.message}`);
             throw error;
         }
     }
 
+// 检查输入是否是合法的渐变格式
+    function isValidGradient(input) {
+        const gradientRegex = /^(linear-gradient|radial-gradient|conic-gradient|-webkit-linear-gradient)\(.*\)$/;
+        return gradientRegex.test(input) || input.includes('to');
+    }
+
+// 将 -webkit-linear-gradient 转换为标准的 linear-gradient
+    function convertWebkitGradient(input) {
+        const regex = /-webkit-linear-gradient\((.+?)\)/;
+        const matches = input.match(regex);
+        if (matches && matches.length > 1) {
+            const params = matches[1].split(',').map(param => param.trim());
+            const angle = params[0];
+            const colors = params.slice(1);
+            return `linear-gradient(${angle}, ${colors.join(', ')})`;
+        } else {
+            throw new Error('Invalid -webkit-linear-gradient format');
+        }
+    }
+
+// 显示错误信息
     function showErrorMessage(message) {
         const errorMessageDiv = document.getElementById('errorMessage');
         errorMessageDiv.textContent = message;
